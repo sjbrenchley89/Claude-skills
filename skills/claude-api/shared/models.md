@@ -59,7 +59,7 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-7 \
 |-------------------|---------------------|-------------------------------|----------------|------------|--------|
 | Claude Opus 4.7   | `claude-opus-4-7`   | —                             | 1M             | 128K       | Active |
 | Claude Opus 4.6   | `claude-opus-4-6`   | —                             | 1M             | 128K       | Active |
-| Claude Sonnet 4.6 | `claude-sonnet-4-6` | -                             | 1M             | 64K        | Active |
+| Claude Sonnet 4.6 | `claude-sonnet-4-6` | —                             | 1M             | 64K        | Active |
 | Claude Haiku 4.5  | `claude-haiku-4-5`  | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active |
 
 ### Model Descriptions
@@ -78,16 +78,11 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-7 \
 | Claude Sonnet 4   | `claude-sonnet-4-0` | `claude-sonnet-4-20250514`    | Active |
 | Claude Opus 4     | `claude-opus-4-0`   | `claude-opus-4-20250514`      | Active |
 
-## Deprecated Models (retiring soon)
-
-| Friendly Name     | Alias (use this)    | Full ID                       | Status     | Retires      |
-|-------------------|---------------------|-------------------------------|------------|--------------|
-| Claude Haiku 3    | —                   | `claude-3-haiku-20240307`     | Deprecated | Apr 19, 2026 |
-
 ## Retired Models (no longer available)
 
 | Friendly Name     | Full ID                       | Retired     |
 |-------------------|-------------------------------|-------------|
+| Claude Haiku 3    | `claude-3-haiku-20240307`     | Apr 19, 2026 |
 | Claude Sonnet 3.7 | `claude-3-7-sonnet-20250219`  | Feb 19, 2026 |
 | Claude Haiku 3.5  | `claude-3-5-haiku-20241022`   | Feb 19, 2026 |
 | Claude Opus 3     | `claude-3-opus-20240229`      | Jan 5, 2026 |
@@ -118,4 +113,4 @@ When a user asks for a model by name, use this table to find the correct model I
 | "haiku", "fast", "cheap"                  | `claude-haiku-4-5`             |
 | "haiku 4.5"                               | `claude-haiku-4-5`             |
 | "haiku 3.5"                               | Retired — suggest `claude-haiku-4-5` |
-| "haiku 3"                                 | Deprecated — suggest `claude-haiku-4-5` |
+| "haiku 3"                                 | Retired — suggest `claude-haiku-4-5` |
