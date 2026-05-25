@@ -1,0 +1,71 @@
+name: Validate Skills
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'template/**'
+  pull_request:
+    paths:
+      - 'skills/**'
+      - 'template/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          const skillsDir = path.join(process.cwd(), 'skills');
+          const dirs = fs.readdirSync(skillsDir).filter(d =>
+            fs.statSync(path.join(skillsDir, d)).isDirectory()
+          );
+
+          let errors = [];
+
+          for (const dir of dirs) {
+            const skillPath = path.join(skillsDir, dir, 'SKILL.md');
+            if (!fs.existsSync(skillPath)) {
+              errors.push(`${dir}: missing SKILL.md`);
+              continue;
+            }
+
+            const content = fs.readFileSync(skillPath, 'utf8');
+            const fmMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+            if (!fmMatch) {
+              errors.push(`${dir}/SKILL.md: missing or malformed YAML frontmatter`);
+              continue;
+            }
+
+            const fm = fmMatch[1];
+            const nameMatch = fm.match(/^name:\s*["']?([^"'\n]+?)["']?\s*$/m);
+            const descMatch = fm.match(/^description:/m);
+
+            if (!nameMatch) {
+              errors.push(`${dir}/SKILL.md: missing required 'name' field`);
+            } else if (nameMatch[1].trim() !== dir) {
+              errors.push(`${dir}/SKILL.md: 'name' field "${nameMatch[1].trim()}" does not match folder name "${dir}"`);
+            }
+
+            if (!descMatch) {
+              errors.push(`${dir}/SKILL.md: missing required 'description' field`);
+            }
+          }
+
+          if (errors.length > 0) {
+            console.error('Validation failed:\n' + errors.map(e => '  - ' + e).join('\n'));
+            process.exit(1);
+          }
+
+          console.log(`OK: validated ${dirs.length} skill(s)`);
+          EOF
