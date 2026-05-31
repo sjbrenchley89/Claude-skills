@@ -1,5 +1,7 @@
 # Claude Model Catalog
 
+> **Cached: 2026-05-31**
+
 **Only use exact model IDs listed in this file.** Never guess or construct model IDs — incorrect IDs will cause API errors. Use aliases wherever available. For the latest information, WebFetch the Models Overview URL in `shared/live-sources.md`, or query the Models API directly (see Programmatic Model Discovery below).
 
 ## Programmatic Model Discovery
@@ -57,14 +59,16 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-7 \
 
 | Friendly Name     | Alias (use this)    | Full ID                       | Context        | Max Output | Status |
 |-------------------|---------------------|-------------------------------|----------------|------------|--------|
+| Claude Opus 4.8   | `claude-opus-4-8`   | —                             | 1M             | 128K       | Active |
 | Claude Opus 4.7   | `claude-opus-4-7`   | —                             | 1M             | 128K       | Active |
 | Claude Opus 4.6   | `claude-opus-4-6`   | —                             | 1M             | 128K       | Active |
 | Claude Sonnet 4.6 | `claude-sonnet-4-6` | —                             | 1M             | 64K        | Active |
 | Claude Haiku 4.5  | `claude-haiku-4-5`  | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active |
 
 ### Model Descriptions
-- **Claude Opus 4.7** — The most capable Claude model to date — highly autonomous, strong on long-horizon agentic work, knowledge work, vision, and memory. Adaptive thinking only; sampling parameters and `budget_tokens` are removed. 1M context window at standard API pricing (no long-context premium) — see `shared/model-migration.md` → Migrating to Opus 4.7 for breaking changes.
-- **Claude Opus 4.6** — Previous-generation Opus. Supports adaptive thinking (recommended), 128K max output tokens (requires streaming for large outputs). 1M context window.
+- **Claude Opus 4.8** — The most capable Claude model to date — highly autonomous, strong on long-horizon agentic work, knowledge work, vision, and memory. Adaptive thinking only; sampling parameters and `budget_tokens` are removed. 1M context window at standard API pricing (no long-context premium).
+- **Claude Opus 4.7** — Previous-generation Opus. Highly autonomous, strong on long-horizon agentic work. Adaptive thinking only. 1M context window — see `shared/model-migration.md` → Migrating to Opus 4.7 for breaking changes.
+- **Claude Opus 4.6** — Supports adaptive thinking (recommended), 128K max output tokens (requires streaming for large outputs). 1M context window.
 - **Claude Sonnet 4.6** — Our best combination of speed and intelligence. Supports adaptive thinking (recommended). 1M context window. 64K max output tokens.
 - **Claude Haiku 4.5** — Fastest and most cost-effective model for simple tasks.
 
@@ -98,7 +102,8 @@ When a user asks for a model by name, use this table to find the correct model I
 
 | User says...                              | Use this model ID              |
 |-------------------------------------------|--------------------------------|
-| "opus", "most powerful"                   | `claude-opus-4-7`              |
+| "opus", "most powerful"                   | `claude-opus-4-8`              |
+| "opus 4.8"                                | `claude-opus-4-8`              |
 | "opus 4.7"                                | `claude-opus-4-7`              |
 | "opus 4.6"                                | `claude-opus-4-6`              |
 | "opus 4.5"                                | `claude-opus-4-5`              |
