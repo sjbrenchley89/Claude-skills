@@ -1,6 +1,6 @@
 # Claude Model Catalog
 
-> **Cached: 2026-06-06**
+> **Cached: 2026-06-20**
 
 **Only use exact model IDs listed in this file.** Never guess or construct model IDs — incorrect IDs will cause API errors. Use aliases wherever available. For the latest information, WebFetch the Models Overview URL in `shared/live-sources.md`, or query the Models API directly (see Programmatic Model Discovery below).
 
