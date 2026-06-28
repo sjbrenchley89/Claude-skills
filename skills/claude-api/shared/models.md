@@ -9,9 +9,9 @@
 For **live** capability data — context window, max output tokens, feature support (thinking, vision, effort, structured outputs, etc.) — query the Models API instead of relying on the cached tables below. Use this when the user asks "what's the context window for X", "does model X support vision/thinking/effort", "which models support feature Y", or wants to select a model by capability at runtime.
 
 ```python
-m = client.models.retrieve("claude-opus-4-7")
-m.id                 # "claude-opus-4-7"
-m.display_name       # "Claude Opus 4.7"
+m = client.models.retrieve("claude-fable-5")
+m.id                 # "claude-fable-5"
+m.display_name       # "Claude Fable 5"
 m.max_input_tokens   # context window (int)
 m.max_tokens         # max output tokens (int)
 
@@ -34,31 +34,16 @@ Top-level fields (`id`, `display_name`, `max_input_tokens`, `max_tokens`) are ty
 ### Raw HTTP
 
 ```bash
-curl https://api.anthropic.com/v1/models/claude-opus-4-7 \
+curl https://api.anthropic.com/v1/models/claude-fable-5 \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01"
-```
-
-```json
-{
-  "id": "claude-opus-4-7",
-  "display_name": "Claude Opus 4.7",
-  "max_input_tokens": 200000,
-  "max_tokens": 128000,
-  "capabilities": {
-    "image_input": {"supported": true},
-    "structured_outputs": {"supported": true},
-    "thinking": {"supported": true, "types": {"enabled": {"supported": false}, "adaptive": {"supported": true}}},
-    "effort": {"supported": true, "low": {"supported": true}, …, "max": {"supported": true}},
-    …
-  }
-}
 ```
 
 ## Current Models (recommended)
 
 | Friendly Name     | Alias (use this)    | Full ID                       | Context        | Max Output | Status |
 |-------------------|---------------------|-------------------------------|----------------|------------|--------|
+| Claude Fable 5    | `claude-fable-5`    | —                             | see API        | see API    | Active |
 | Claude Opus 4.8   | `claude-opus-4-8`   | —                             | 1M             | 128K       | Active |
 | Claude Opus 4.7   | `claude-opus-4-7`   | —                             | 1M             | 128K       | Active |
 | Claude Opus 4.6   | `claude-opus-4-6`   | —                             | 1M             | 128K       | Active |
@@ -66,7 +51,8 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-7 \
 | Claude Haiku 4.5  | `claude-haiku-4-5`  | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active |
 
 ### Model Descriptions
-- **Claude Opus 4.8** — The most capable Claude model to date — highly autonomous, strong on long-horizon agentic work, knowledge work, vision, and memory. Adaptive thinking only; sampling parameters and `budget_tokens` are removed. 1M context window at standard API pricing (no long-context premium).
+- **Claude Fable 5** — The most capable Claude model. GA since 2026-06-09. Use the Models API for full capability details (`client.models.retrieve("claude-fable-5")`).
+- **Claude Opus 4.8** — Highly autonomous, strong on long-horizon agentic work, knowledge work, vision, and memory. Adaptive thinking only; sampling parameters and `budget_tokens` are removed. 1M context window at standard API pricing (no long-context premium).
 - **Claude Opus 4.7** — Previous-generation Opus. Highly autonomous, strong on long-horizon agentic work. Adaptive thinking only. 1M context window — see `shared/model-migration.md` → Migrating to Opus 4.7 for breaking changes.
 - **Claude Opus 4.6** — Supports adaptive thinking (recommended), 128K max output tokens (requires streaming for large outputs). 1M context window.
 - **Claude Sonnet 4.6** — Our best combination of speed and intelligence. Supports adaptive thinking (recommended). 1M context window. 64K max output tokens.
@@ -102,8 +88,8 @@ When a user asks for a model by name, use this table to find the correct model I
 
 | User says...                              | Use this model ID              |
 |-------------------------------------------|--------------------------------|
-| "opus", "most powerful"                   | `claude-opus-4-8`              |
-| "opus 4.8"                                | `claude-opus-4-8`              |
+| "fable", "fable 5", "most powerful"       | `claude-fable-5`               |
+| "opus", "opus 4.8"                        | `claude-opus-4-8`              |
 | "opus 4.7"                                | `claude-opus-4-7`              |
 | "opus 4.6"                                | `claude-opus-4-6`              |
 | "opus 4.5"                                | `claude-opus-4-5`              |
