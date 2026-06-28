@@ -9,9 +9,9 @@
 For **live** capability data — context window, max output tokens, feature support (thinking, vision, effort, structured outputs, etc.) — query the Models API instead of relying on the cached tables below. Use this when the user asks "what's the context window for X", "does model X support vision/thinking/effort", "which models support feature Y", or wants to select a model by capability at runtime.
 
 ```python
-m = client.models.retrieve("claude-fable-5")
-m.id                 # "claude-fable-5"
-m.display_name       # "Claude Fable 5"
+m = client.models.retrieve("claude-opus-4-8")
+m.id                 # "claude-opus-4-8"
+m.display_name       # "Claude Opus 4.8"
 m.max_input_tokens   # context window (int)
 m.max_tokens         # max output tokens (int)
 
@@ -34,7 +34,7 @@ Top-level fields (`id`, `display_name`, `max_input_tokens`, `max_tokens`) are ty
 ### Raw HTTP
 
 ```bash
-curl https://api.anthropic.com/v1/models/claude-fable-5 \
+curl https://api.anthropic.com/v1/models/claude-opus-4-8 \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01"
 ```
@@ -43,7 +43,7 @@ curl https://api.anthropic.com/v1/models/claude-fable-5 \
 
 | Friendly Name     | Alias (use this)    | Full ID                       | Context        | Max Output | Status |
 |-------------------|---------------------|-------------------------------|----------------|------------|--------|
-| Claude Fable 5    | `claude-fable-5`    | —                             | see API        | see API    | Active |
+| Claude Fable 5    | `claude-fable-5`    | —                             | see API        | see API    | **Suspended** (2026-06-12) |
 | Claude Opus 4.8   | `claude-opus-4-8`   | —                             | 1M             | 128K       | Active |
 | Claude Opus 4.7   | `claude-opus-4-7`   | —                             | 1M             | 128K       | Active |
 | Claude Opus 4.6   | `claude-opus-4-6`   | —                             | 1M             | 128K       | Active |
@@ -51,8 +51,8 @@ curl https://api.anthropic.com/v1/models/claude-fable-5 \
 | Claude Haiku 4.5  | `claude-haiku-4-5`  | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active |
 
 ### Model Descriptions
-- **Claude Fable 5** — The most capable Claude model. GA since 2026-06-09. Use the Models API for full capability details (`client.models.retrieve("claude-fable-5")`).
-- **Claude Opus 4.8** — Highly autonomous, strong on long-horizon agentic work, knowledge work, vision, and memory. Adaptive thinking only; sampling parameters and `budget_tokens` are removed. 1M context window at standard API pricing (no long-context premium).
+- **Claude Fable 5** — **Access suspended 2026-06-12.** Do not route requests here until restored. See status.claude.com for current incident state.
+- **Claude Opus 4.8** — Most capable available model. Highly autonomous, strong on long-horizon agentic work, knowledge work, vision, and memory. Adaptive thinking only; sampling parameters and `budget_tokens` are removed. 1M context window at standard API pricing (no long-context premium).
 - **Claude Opus 4.7** — Previous-generation Opus. Highly autonomous, strong on long-horizon agentic work. Adaptive thinking only. 1M context window — see `shared/model-migration.md` → Migrating to Opus 4.7 for breaking changes.
 - **Claude Opus 4.6** — Supports adaptive thinking (recommended), 128K max output tokens (requires streaming for large outputs). 1M context window.
 - **Claude Sonnet 4.6** — Our best combination of speed and intelligence. Supports adaptive thinking (recommended). 1M context window. 64K max output tokens.
@@ -65,13 +65,13 @@ curl https://api.anthropic.com/v1/models/claude-fable-5 \
 | Claude Opus 4.5   | `claude-opus-4-5`   | `claude-opus-4-5-20251101`    | Active |
 | Claude Opus 4.1   | `claude-opus-4-1`   | `claude-opus-4-1-20250805`    | Active |
 | Claude Sonnet 4.5 | `claude-sonnet-4-5` | `claude-sonnet-4-5-20250929`  | Active |
-| Claude Sonnet 4   | `claude-sonnet-4-0` | `claude-sonnet-4-20250514`    | Active |
-| Claude Opus 4     | `claude-opus-4-0`   | `claude-opus-4-20250514`      | Active |
 
 ## Retired Models (no longer available)
 
 | Friendly Name     | Full ID                       | Retired     |
 |-------------------|-------------------------------|-------------|
+| Claude Opus 4     | `claude-opus-4-20250514`      | Jun 15, 2026 |
+| Claude Sonnet 4   | `claude-sonnet-4-20250514`    | Jun 15, 2026 |
 | Claude Haiku 3    | `claude-3-haiku-20240307`     | Apr 19, 2026 |
 | Claude Sonnet 3.7 | `claude-3-7-sonnet-20250219`  | Feb 19, 2026 |
 | Claude Haiku 3.5  | `claude-3-5-haiku-20241022`   | Feb 19, 2026 |
@@ -88,17 +88,18 @@ When a user asks for a model by name, use this table to find the correct model I
 
 | User says...                              | Use this model ID              |
 |-------------------------------------------|--------------------------------|
-| "fable", "fable 5", "most powerful"       | `claude-fable-5`               |
+| "most powerful"                           | `claude-opus-4-8`              |
+| "fable", "fable 5"                        | Suspended — use `claude-opus-4-8` until restored |
 | "opus", "opus 4.8"                        | `claude-opus-4-8`              |
 | "opus 4.7"                                | `claude-opus-4-7`              |
 | "opus 4.6"                                | `claude-opus-4-6`              |
 | "opus 4.5"                                | `claude-opus-4-5`              |
 | "opus 4.1"                                | `claude-opus-4-1`              |
-| "opus 4", "opus 4.0"                      | `claude-opus-4-0`              |
+| "opus 4", "opus 4.0"                      | Retired — suggest `claude-opus-4-5` |
 | "sonnet", "balanced"                      | `claude-sonnet-4-6`            |
 | "sonnet 4.6"                              | `claude-sonnet-4-6`            |
 | "sonnet 4.5"                              | `claude-sonnet-4-5`            |
-| "sonnet 4", "sonnet 4.0"                  | `claude-sonnet-4-0`            |
+| "sonnet 4", "sonnet 4.0"                  | Retired — suggest `claude-sonnet-4-5` |
 | "sonnet 3.7"                              | Retired — suggest `claude-sonnet-4-5` |
 | "sonnet 3.5"                              | Retired — suggest `claude-sonnet-4-5` |
 | "haiku", "fast", "cheap"                  | `claude-haiku-4-5`             |
