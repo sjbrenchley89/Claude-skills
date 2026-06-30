@@ -52,7 +52,7 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-8 \
 | Claude Haiku 4.5  | `claude-haiku-4-5`  | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active |
 
 ### Model Descriptions
-- **Claude Fable 5** — Anthropic's most capable widely released model, for the most demanding reasoning and long-horizon agentic work. Adaptive thinking always on; GA on the Claude API, Bedrock, Google Cloud, and Microsoft Foundry since 2026-06-09. (Was temporarily suspended 2026-06-12; access restored.)
+- **Claude Fable 5** — Anthropic's most capable widely released model, for the most demanding reasoning and long-horizon agentic work. Adaptive thinking always on; GA on the Claude API, Bedrock, Google Cloud, and Microsoft Foundry since 2026-06-09. (Was temporarily suspended 2026-06-12; access restored.) **Requires 30-day data retention** — zero-data-retention (ZDR) orgs get a 400 `invalid_request_error`; use `claude-opus-4-8` (ZDR-eligible) or contact your Anthropic account team to adjust retention config.
 - **Claude Mythos 5** — Invitation-only research model available through [Project Glasswing](https://anthropic.com/glasswing). Not self-serve. Contact Anthropic, AWS, or Google Cloud account team for access.
 - **Claude Opus 4.8** — Most capable Opus-tier model. Highly autonomous, strong on long-horizon agentic coding, complex reasoning, and high-autonomy work. Adaptive thinking; `effort` defaults to `high`. 1M context window.
 - **Claude Opus 4.7** — Previous-generation Opus. Highly autonomous, strong on long-horizon agentic work. Adaptive thinking only. 1M context window — uses new tokenizer (same text ~30% more tokens vs. pre-4.7 models). See `shared/model-migration.md` → Migrating to Opus 4.7 for breaking changes.
@@ -93,8 +93,8 @@ When a user asks for a model by name, use this table to find the correct model I
 
 | User says...                              | Use this model ID              |
 |-------------------------------------------|--------------------------------|
-| "most powerful", "most capable"           | `claude-fable-5`               |
-| "fable", "fable 5"                        | `claude-fable-5`               |
+| "most powerful", "most capable"           | `claude-fable-5` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-4-8` under ZDR) |
+| "fable", "fable 5"                        | `claude-fable-5` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-4-8` under ZDR) |
 | "mythos", "mythos 5"                      | `claude-mythos-5` (invite-only — confirm access first) |
 | "opus", "opus 4.8"                        | `claude-opus-4-8`              |
 | "opus 4.7"                                | `claude-opus-4-7`              |
@@ -106,9 +106,9 @@ When a user asks for a model by name, use this table to find the correct model I
 | "sonnet 5"                                | `claude-sonnet-5`              |
 | "sonnet 4.6"                              | `claude-sonnet-4-6`            |
 | "sonnet 4.5"                              | `claude-sonnet-4-5`            |
-| "sonnet 4", "sonnet 4.0"                  | Retired — suggest `claude-sonnet-5` |
-| "sonnet 3.7"                              | Retired — suggest `claude-sonnet-5` |
-| "sonnet 3.5"                              | Retired — suggest `claude-sonnet-5` |
+| "sonnet 4", "sonnet 4.0"                  | Retired — suggest `claude-sonnet-4-6` (Anthropic's official replacement; old call sites may still send sampling params/manual thinking/prefills that 400 on Sonnet 5 — see `shared/model-migration.md`) |
+| "sonnet 3.7"                              | Retired — suggest `claude-sonnet-4-6` (see note above) |
+| "sonnet 3.5"                              | Retired — suggest `claude-sonnet-4-6` (see note above) |
 | "haiku", "fast", "cheap"                  | `claude-haiku-4-5`             |
 | "haiku 4.5"                               | `claude-haiku-4-5`             |
 | "haiku 3.5"                               | Retired — suggest `claude-haiku-4-5` |
