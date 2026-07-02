@@ -195,14 +195,14 @@ These models return 404 — update immediately:
 | `claude-3-5-sonnet-20240620`  | Oct 28, 2025  | `claude-sonnet-4-6`  |
 | `claude-3-sonnet-20240229`    | Jul 21, 2025  | `claude-sonnet-4-6`  |
 | `claude-2.1`, `claude-2.0`    | Jul 21, 2025  | `claude-sonnet-4-6`  |
+| `claude-opus-4-20250514`      | Jun 15, 2026  | `claude-opus-4-7`    |
+| `claude-sonnet-4-20250514`    | Jun 15, 2026  | `claude-sonnet-4-6`  |
 
 ## Deprecated Models (retiring soon)
 
 | Model                         | Retires       | Replacement          |
 | ----------------------------- | ------------- | -------------------- |
 | `claude-3-haiku-20240307`     | Apr 19, 2026  | `claude-haiku-4-5`   |
-| `claude-opus-4-20250514`      | June 15, 2026 | `claude-opus-4-7`    |
-| `claude-sonnet-4-20250514`    | June 15, 2026 | `claude-sonnet-4-6`  |
 
 ---
 
