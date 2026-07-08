@@ -1,6 +1,6 @@
 # Claude Model Catalog
 
-> **Cached: 2026-07-06**
+> **Cached: 2026-07-08**
 
 **Only use exact model IDs listed in this file.** Never guess or construct model IDs — incorrect IDs will cause API errors. Use aliases wherever available. For the latest information, WebFetch the Models Overview URL in `shared/live-sources.md`, or query the Models API directly (see Programmatic Model Discovery below).
 
@@ -74,7 +74,7 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-8 \
 ## Retired Models (no longer available)
 
 | Friendly Name     | Full ID                       | Retired     |
-|-------------------|-------------------------------|-------------|
+|-------------------|--------------------------------|-------------|
 | Claude Opus 4     | `claude-opus-4-20250514`      | Jun 15, 2026 |
 | Claude Sonnet 4   | `claude-sonnet-4-20250514`    | Jun 15, 2026 |
 | Claude Haiku 3    | `claude-3-haiku-20240307`     | Apr 19, 2026 |
@@ -92,7 +92,7 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-8 \
 When a user asks for a model by name, use this table to find the correct model ID:
 
 | User says...                              | Use this model ID              |
-|-------------------------------------------|--------------------------------|
+|--------------------------------------------|---------------------------------|
 | "most powerful", "most capable"           | `claude-fable-5` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-4-8` under ZDR) |
 | "fable", "fable 5"                        | `claude-fable-5` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-4-8` under ZDR) |
 | "mythos", "mythos 5"                      | `claude-mythos-5` (invite-only — confirm access first; also requires 30-day data retention, 400 under ZDR) |
