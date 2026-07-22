@@ -1,6 +1,6 @@
 # Claude Model Catalog
 
-> **Cached: 2026-07-20**
+> **Cached: 2026-07-21**
 
 **Only use exact model IDs listed in this file.** Never guess or construct model IDs — incorrect IDs will cause API errors. Use aliases wherever available. For the latest information, WebFetch the Models Overview URL in `shared/live-sources.md`, or query the Models API directly (see Programmatic Model Discovery below).
 
@@ -53,7 +53,7 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-8 \
 
 ### Model Descriptions
 - **Claude Fable 5** — Anthropic's most capable widely released model, for the most demanding reasoning and long-horizon agentic work. Adaptive thinking always on; GA on the Claude API, Bedrock, Google Cloud, and Microsoft Foundry since 2026-06-09. (Was temporarily suspended 2026-06-12; access restored.) **Requires 30-day data retention** — zero-data-retention (ZDR) orgs get a 400 `invalid_request_error`; use `claude-opus-4-8` (ZDR-eligible) or contact your Anthropic account team to adjust retention config.
-- **Claude Mythos 5** — Invitation-only research model available through [Project Glasswing](https://anthropic.com/glasswing). Not self-serve. Contact Anthropic, AWS, or Google Cloud account team for access. **Requires 30-day data retention** — zero-data-retention (ZDR) orgs get a 400 `invalid_request_error`, even with Glasswing access; contact your Anthropic account team to adjust retention config.
+- **Claude Mythos 5** — Invitation-only research model available through [Project Glasswing](https://anthropic.com/glasswing). Not self-serve. Contact Anthropic, AWS, or Google Cloud account team for access. **Requires 30-day data retention** — zero-data-retention (ZDR) orgs get a 400 `invalid_request_error`, even with Glasswing access; contact your Anthropic account team to adjust retention config. `claude-mythos-preview` (the earlier Glasswing preview) retired on 2026-07-21 — migrate any remaining usage to `claude-mythos-5`.
 - **Claude Opus 4.8** — Most capable Opus-tier model. Highly autonomous, strong on long-horizon agentic coding, complex reasoning, and high-autonomy work. Adaptive thinking; `effort` defaults to `high`. 1M context window.
 - **Claude Opus 4.7** — Previous-generation Opus. Highly autonomous, strong on long-horizon agentic work. Adaptive thinking only. 1M context window — uses new tokenizer (same text ~30% more tokens vs. pre-4.7 models). See `shared/model-migration.md` → Migrating to Opus 4.7 for breaking changes.
 - **Claude Opus 4.6** — Supports adaptive thinking (recommended), 128K max output tokens (requires streaming for large outputs). 1M context window.
@@ -86,6 +86,7 @@ curl https://api.anthropic.com/v1/models/claude-opus-4-8 \
 | Claude Sonnet 3   | `claude-3-sonnet-20240229`    | Jul 21, 2025 |
 | Claude 2.1        | `claude-2.1`                  | Jul 21, 2025 |
 | Claude 2.0        | `claude-2.0`                  | Jul 21, 2025 |
+| Claude Mythos Preview | `claude-mythos-preview`   | Jul 21, 2026 |
 
 ## Resolving User Requests
 
@@ -96,6 +97,7 @@ When a user asks for a model by name, use this table to find the correct model I
 | "most powerful", "most capable"           | `claude-fable-5` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-4-8` under ZDR) |
 | "fable", "fable 5"                        | `claude-fable-5` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-4-8` under ZDR) |
 | "mythos", "mythos 5"                      | `claude-mythos-5` (invite-only — confirm access first; also requires 30-day data retention, 400 under ZDR) |
+| "mythos preview"                          | Retired Jul 21, 2026 — suggest `claude-mythos-5` (invite-only, see note above) |
 | "opus", "opus 4.8"                        | `claude-opus-4-8`              |
 | "opus 4.7"                                | `claude-opus-4-7`              |
 | "opus 4.6"                                | `claude-opus-4-6`              |
