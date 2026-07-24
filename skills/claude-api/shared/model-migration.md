@@ -13,7 +13,8 @@ For the latest, authoritative version (with code samples in every supported lang
 | Per-SDK Syntax Reference | Translate the Python examples in this guide to TypeScript / Go / Ruby / Java / C# / PHP |
 | Destination Models / Retired Model Replacements | Picking a target model |
 | Breaking Changes by Source Model | Migrating to Opus 4.6 / Sonnet 4.6 |
-| Migrating to Opus 4.7 | Migrating to Opus 4.7 (breaking changes, silent defaults, behavioral shifts) |
+| Migrating to Opus 5 | Migrating to Opus 5 (current recommended Opus target — breaking changes, effort defaults, checklist) |
+| Migrating to Opus 4.7 | Migrating to Opus 4.7 (breaking changes, silent defaults, behavioral shifts) — still relevant if pinning to 4.7 instead of Opus 5 |
 | Opus 4.7 Migration Checklist | The required vs optional items for 4.7, tagged `[BLOCKS]` / `[TUNE]` |
 | Verify the Migration | After edits — runtime spot-check |
 
@@ -173,12 +174,12 @@ If you're applying several prompt-tuning edits at once, offer them as a short li
 
 | If you're on…                         | Migrate to         | Why                                               |
 | ------------------------------------- | ------------------ | ------------------------------------------------- |
-| Opus 4.6                              | `claude-opus-4-7`  | Most capable model; adaptive thinking only; high-res vision; see Migrating to Opus 4.7 |
-| Opus 4.0 / 4.1 / 4.5 / Opus 3         | `claude-opus-4-6`  | Most intelligent 4.x before 4.7; adaptive thinking; 128K output |
+| Opus 4.8 / 4.7 / 4.6                  | `claude-opus-5`    | Current recommended Opus-tier model; thinking on by default; see Migrating to Opus 5 |
+| Opus 4.0 / 4.1 / 4.5 / Opus 3         | `claude-opus-5`    | Skip intermediate Opus releases — migrate straight to the current model; see Migrating to Opus 5 |
 | Sonnet 4.0 / 4.5 / 3.7 / 3.5          | `claude-sonnet-4-6`| Best speed / intelligence balance; adaptive thinking; 64K output |
 | Haiku 3 / 3.5                         | `claude-haiku-4-5` | Fastest and most cost-effective                   |
 
-Default to the latest Opus for the caller's tier unless they explicitly chose otherwise. If you're moving from Opus 4.5 or older directly to Opus 4.7, apply the 4.6 migration first, then layer the Opus 4.7 changes on top (see Migrating to Opus 4.7 below).
+Default to `claude-opus-5` for the caller's Opus tier unless they explicitly ask to pin an older Opus release. If you're moving from Opus 4.6 or older, apply the base 4.6 migration changes below first (extended thinking → adaptive, sampling-parameter removal, prefill removal), then layer the Opus 5-specific changes on top (see Migrating to Opus 5 below). If the caller explicitly wants to stay on Opus 4.7 instead of moving to Opus 5, use the dedicated Migrating to Opus 4.7 section instead.
 
 ---
 
@@ -190,12 +191,12 @@ These models return 404 — update immediately:
 | ----------------------------- | ------------- | -------------------- |
 | `claude-3-7-sonnet-20250219`  | Feb 19, 2026  | `claude-sonnet-4-6`  |
 | `claude-3-5-haiku-20241022`   | Feb 19, 2026  | `claude-haiku-4-5`   |
-| `claude-3-opus-20240229`      | Jan 5, 2026   | `claude-opus-4-7`    |
+| `claude-3-opus-20240229`      | Jan 5, 2026   | `claude-opus-5`      |
 | `claude-3-5-sonnet-20241022`  | Oct 28, 2025  | `claude-sonnet-4-6`  |
 | `claude-3-5-sonnet-20240620`  | Oct 28, 2025  | `claude-sonnet-4-6`  |
 | `claude-3-sonnet-20240229`    | Jul 21, 2025  | `claude-sonnet-4-6`  |
 | `claude-2.1`, `claude-2.0`    | Jul 21, 2025  | `claude-sonnet-4-6`  |
-| `claude-opus-4-20250514`      | Jun 15, 2026  | `claude-opus-4-7`    |
+| `claude-opus-4-20250514`      | Jun 15, 2026  | `claude-opus-5`      |
 | `claude-sonnet-4-20250514`    | Jun 15, 2026  | `claude-sonnet-4-6`  |
 
 ## Deprecated Models (retiring soon)
@@ -470,14 +471,16 @@ If the model is now overtriggering a tool or skill, the fix is almost always to 
 
 | Old string (migration source)  | New string         |
 | ------------------------------ | ------------------ |
-| `claude-opus-4-6`              | `claude-opus-4-7`  |
-| `claude-opus-4-5`              | `claude-opus-4-7`  |
-| `claude-opus-4-1`              | `claude-opus-4-7`  |
-| `claude-opus-4-0`              | `claude-opus-4-7`  |
+| `claude-opus-4-8`              | `claude-opus-5`    |
+| `claude-opus-4-7`              | `claude-opus-5`    |
+| `claude-opus-4-6`              | `claude-opus-5`    |
+| `claude-opus-4-5`              | `claude-opus-5`    |
+| `claude-opus-4-1`              | `claude-opus-5`    |
+| `claude-opus-4-0`              | `claude-opus-5`    |
 | `claude-sonnet-4-5`            | `claude-sonnet-4-6`|
 | `claude-sonnet-4-0`            | `claude-sonnet-4-6`|
 
-Older aliases (`claude-opus-4-5`, `claude-sonnet-4-5`, `claude-opus-4-1`, etc.) are still active and can be pinned if you need time before upgrading — see `shared/models.md` for the full legacy list.
+Older aliases (`claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-5`, `claude-sonnet-4-5`, `claude-opus-4-1`, etc.) are still active and can be pinned if you need time before upgrading — see `shared/models.md` for the full legacy list.
 
 ---
 
@@ -515,11 +518,88 @@ For cached prompts: the render order and hash inputs did not change, so existing
 
 ---
 
+## Migrating to Opus 5
+
+> **Model ID `claude-opus-5` is authoritative as written here.** When the user asks to migrate to Opus 5 (or asks for "the current/latest Opus"), write `model="claude-opus-5"` exactly. Do **not** WebFetch to verify — this guide is the source of truth for migration target IDs. The corresponding entry exists in `shared/models.md`.
+
+Claude Opus 5 is a step-change improvement over Claude Opus 4.8 on deep reasoning, agentic and long-horizon tasks, and test-time compute scaling. It's priced the same as Opus 4.8 ($5 / input MTok, $25 / output MTok). Opus 4.1 is deprecated (retiring 2026-08-05) — migrate directly to Opus 5, not to Opus 4.8.
+
+**TL;DR for someone on Opus 4.8 (or earlier):** update the model ID to `claude-opus-5`; thinking now runs by default even with no `thinking` field, so revisit `max_tokens` (a hard cap on thinking + response together); remove `temperature`/`top_p`/`top_k`, manual `thinking: {type: "enabled", budget_tokens: N}`, and assistant prefills — all 400 on Opus 5; re-run an `effort` sweep rather than reusing Opus 4.8 settings; re-baseline token counts with `count_tokens()` since Opus 5 shares Opus 4.7's tokenizer (~1x–1.35x more tokens than pre-4.7 models for the same text).
+
+### Breaking changes (will 400 on Opus 5)
+
+**Thinking runs by default.** Requests with no `thinking` field now run with adaptive thinking (Opus 4.8 ran without thinking by default). `max_tokens` remains a hard limit on total output (thinking + response text) — revisit it for workloads that previously ran without thinking.
+
+```python
+# Opus 4.8 — ran without thinking unless requested
+client.messages.create(model="claude-opus-4-8", max_tokens=16000, messages=[...])
+
+# Opus 5 — adaptive thinking is ON by default, no thinking field needed
+client.messages.create(model="claude-opus-5", max_tokens=16000, messages=[...])
+
+# To preserve the old no-thinking behavior on Opus 5:
+client.messages.create(
+    model="claude-opus-5",
+    max_tokens=16000,
+    thinking={"type": "disabled"},       # only valid at effort "high" or below
+    output_config={"effort": "high"},
+    messages=[...],
+)
+```
+
+**Disabling thinking is capped at `high` effort.** `thinking: {type: "disabled"}` combined with `effort: "xhigh"` or `effort: "max"` returns a 400. Either drop `thinking: {type: "disabled"}` (thinking is on by default) or cap `effort` at `high`.
+
+**Sampling parameters, manual extended thinking, and assistant prefills are still removed** — same as Opus 4.7 (see Breaking changes above): `temperature` / `top_p` / `top_k`, `thinking: {type: "enabled", budget_tokens: N}`, and prefilled assistant turns all 400 on Opus 5.
+
+### Effort levels on Opus 5
+
+Default is `high`. Run a fresh sweep rather than carrying over Opus 4.8 settings — `medium` is stronger on Opus 5 than on earlier models, so it's often viable where it wasn't before.
+
+| Level | Use when |
+| --- | --- |
+| `max` | Maximum capability; demanding tasks where cost is secondary |
+| `xhigh` | Extended capability for long agentic/coding work; set `max_tokens` to 64K+ for thinking + tool-call headroom |
+| `high` | Default; balances token usage and intelligence |
+| `medium` | Cost-saving; noticeably stronger on Opus 5 than on earlier models |
+| `low` | Short, scoped, latency-sensitive tasks |
+
+### Silent default changes
+
+**Thinking content omitted by default.** `thinking.display` defaults to `"omitted"` (thinking blocks are present but empty), same as Opus 4.7. Set `thinking.display: "summarized"` to surface readable thinking summaries to users.
+
+**Tokenizer unchanged from Opus 4.7.** Opus 5 shares the tokenizer introduced with Opus 4.7 — the same text produces roughly 1x–1.35x more tokens than on pre-4.7 models. Re-baseline with `client.messages.count_tokens()` rather than applying a blanket multiplier.
+
+### Unsupported / notable feature differences
+
+| Feature | Opus 5 |
+| --- | --- |
+| Web fetch tool | Not available |
+| Priority Tier | Not supported |
+| 1M context window | Default — no beta header needed |
+| 128K max output tokens | Supported |
+| Prompt caching minimum | 512 tokens (down from 1,024) |
+
+### Opus 5 Migration Checklist
+
+- [ ] Update model ID: `claude-opus-4-8` (or older) → `claude-opus-5`
+- [ ] Review call sites with no `thinking` field — they now run with adaptive thinking; revisit `max_tokens`
+- [ ] Remove `temperature`, `top_p`, `top_k`
+- [ ] Remove `thinking: {type: "enabled", budget_tokens: N}` → adaptive thinking + `effort`
+- [ ] Remove assistant-message prefills
+- [ ] Remove `thinking: {type: "disabled"}` at `xhigh`/`max` effort (400) — drop it or cap effort at `high`
+- [ ] Run a fresh `effort` sweep against your evals; don't reuse Opus 4.8 settings
+- [ ] If using `xhigh`/`max` effort, set `max_tokens` to 64K+
+- [ ] Re-baseline token counts and cost with `count_tokens()`
+- [ ] Handle `stop_reason: "refusal"` for safety-classifier refusals
+- [ ] If migrating from Opus 4.1: go straight to Opus 5, not Opus 4.8 — Opus 4.1 is deprecated and Opus 5 is the recommended target
+
+---
+
 ## Migrating to Opus 4.7
 
 > **Model ID `claude-opus-4-7` is authoritative as written here.** When the user asks to migrate to Opus 4.7, write `model="claude-opus-4-7"` exactly. Do **not** WebFetch to verify — this guide is the source of truth for migration target IDs. The corresponding entry exists in `shared/models.md`.
 
-Claude Opus 4.7 is our most capable generally available model to date. It is highly autonomous and performs exceptionally well on long-horizon agentic work, knowledge work, vision tasks, and memory tasks. This section summarizes everything new at launch. It is layered on top of the 4.6 migration above — if the caller is jumping from Opus 4.5 or older, apply the 4.6 changes first, then apply this section.
+Claude Opus 4.7 was the most capable generally available model at its launch; it has since been superseded by Claude Opus 5 (see Migrating to Opus 5 above), and this section is kept for callers who explicitly want to pin Opus 4.7 rather than move to the current model. Opus 4.7 is highly autonomous and performs exceptionally well on long-horizon agentic work, knowledge work, vision tasks, and memory tasks. This section summarizes everything new at its launch. It is layered on top of the 4.6 migration above — if the caller is jumping from Opus 4.5 or older, apply the 4.6 changes first, then apply this section.
 
 **TL;DR for someone already on Opus 4.6:** update the model ID to `claude-opus-4-7`, strip any remaining `budget_tokens` and sampling parameters (both 400 on Opus 4.7), give `max_tokens` extra headroom and re-baseline with `count_tokens()` against the new model, opt back into `thinking.display: "summarized"` if reasoning is surfaced to users, and re-tune `effort` — it matters more on 4.7 than on any prior Opus.
 
