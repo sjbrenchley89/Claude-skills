@@ -175,11 +175,11 @@ If you're applying several prompt-tuning edits at once, offer them as a short li
 | If you're on…                         | Migrate to         | Why                                               |
 | ------------------------------------- | ------------------ | ------------------------------------------------- |
 | Opus 4.8 / 4.7 / 4.6                  | `claude-opus-5`    | Current recommended Opus-tier model; thinking on by default; see Migrating to Opus 5 |
-| Opus 4.0 / 4.1 / 4.5 / Opus 3         | `claude-opus-5`    | Skip intermediate Opus releases — migrate straight to the current model; see Migrating to Opus 5 |
+| Opus 4.0 / 4.1 / 4.5 / Opus 3         | `claude-opus-5`    | Skip intermediate Opus releases — migrate straight to the current model, but apply Additional Changes When Coming from 3.x / 4.0 / 4.1 → 4.6 first (tool versions, `undo_edit` removal, `model_context_window_exceeded`, trailing newlines), then Migrating to Opus 5 |
 | Sonnet 4.0 / 4.5 / 3.7 / 3.5          | `claude-sonnet-4-6`| Best speed / intelligence balance; adaptive thinking; 64K output |
 | Haiku 3 / 3.5                         | `claude-haiku-4-5` | Fastest and most cost-effective                   |
 
-Default to `claude-opus-5` for the caller's Opus tier unless they explicitly ask to pin an older Opus release. If you're moving from Opus 4.6 or older, apply the base 4.6 migration changes below first (extended thinking → adaptive, sampling-parameter removal, prefill removal), then layer the Opus 5-specific changes on top (see Migrating to Opus 5 below). If the caller explicitly wants to stay on Opus 4.7 instead of moving to Opus 5, use the dedicated Migrating to Opus 4.7 section instead.
+Default to `claude-opus-5` for the caller's Opus tier unless they explicitly ask to pin an older Opus release. If you're moving from Opus 4.6 or older, apply the base 4.6 migration changes below first (extended thinking → adaptive, sampling-parameter removal, prefill removal), then layer the Opus 5-specific changes on top (see Migrating to Opus 5 below). If you're jumping directly from Opus 3 / 4.0 / 4.1 / 4.5, also apply **Additional Changes When Coming from 3.x / 4.0 / 4.1 → 4.6** below first — tool-version pair updates, `undo_edit` removal, `model_context_window_exceeded` handling, and trailing-newline handling are required regardless of which newer model you land on, and skipping them causes 400s or silent runtime mismatches even though you're going straight to Opus 5. If the caller explicitly wants to stay on Opus 4.7 instead of moving to Opus 5, use the dedicated Migrating to Opus 4.7 section instead.
 
 ---
 
@@ -553,7 +553,7 @@ client.messages.create(
 
 ### Effort levels on Opus 5
 
-Default is `high`. Run a fresh sweep rather than carrying over Opus 4.8 settings — `medium` is stronger on Opus 5 than on earlier models, so it's often viable where it wasn't before.
+Default is `high` **on the Claude API and Claude Code only** — set `effort` explicitly on Bedrock, Vertex AI, Microsoft Foundry, and any other surface, since the default there is not guaranteed to match. Run a fresh sweep rather than carrying over Opus 4.8 settings — `medium` is stronger on Opus 5 than on earlier models, so it's often viable where it wasn't before.
 
 | Level | Use when |
 | --- | --- |
@@ -592,6 +592,7 @@ Default is `high`. Run a fresh sweep rather than carrying over Opus 4.8 settings
 - [ ] Re-baseline token counts and cost with `count_tokens()`
 - [ ] Handle `stop_reason: "refusal"` for safety-classifier refusals
 - [ ] If migrating from Opus 4.1: go straight to Opus 5, not Opus 4.8 — Opus 4.1 is deprecated and Opus 5 is the recommended target
+- [ ] If migrating from Opus 3 / 4.0 / 4.1 / 4.5 (not 4.6+): also apply **Additional Changes When Coming from 3.x / 4.0 / 4.1 → 4.6** above — tool-version pair, `undo_edit` removal, `model_context_window_exceeded` handling, trailing newlines — these still apply even when the destination is Opus 5, not 4.6
 
 ---
 
