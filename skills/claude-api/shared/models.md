@@ -1,6 +1,6 @@
 # Claude Model Catalog
 
-> **Cached: 2026-08-04**
+> **Cached: 2026-08-05**
 
 **Only use exact model IDs listed in this file.** Never guess or construct model IDs — incorrect IDs will cause API errors. Use aliases wherever available. For the latest information, WebFetch the Models Overview URL in `shared/live-sources.md`, or query the Models API directly (see Programmatic Model Discovery below).
 
@@ -64,16 +64,14 @@ curl https://api.anthropic.com/v1/models/claude-opus-5 \
 | Claude Opus 4.7   | `claude-opus-4-7`   | —                             | Active |
 | Claude Opus 4.6   | `claude-opus-4-6`   | —                             | Active |
 | Claude Opus 4.5   | `claude-opus-4-5`   | `claude-opus-4-5-20251101`    | Active |
-| Claude Opus 4.1   | `claude-opus-4-1`   | `claude-opus-4-1-20250805`    | **Deprecated** — retiring 2026-08-05 |
 | Claude Sonnet 4.6 | `claude-sonnet-4-6` | —                             | Active |
 | Claude Sonnet 4.5 | `claude-sonnet-4-5` | `claude-sonnet-4-5-20250929`  | Active |
-
-> **Note:** Claude Opus 4.1 is deprecated. Migrate to `claude-opus-5` before 2026-08-05.
 
 ## Retired Models (no longer available)
 
 | Friendly Name     | Full ID                       | Retired     |
 |-------------------|-------------------------------|-------------|
+| Claude Opus 4.1   | `claude-opus-4-1-20250805`    | Aug 5, 2026 |
 | Claude Opus 4     | `claude-opus-4-20250514`      | Jun 15, 2026 |
 | Claude Sonnet 4   | `claude-sonnet-4-20250514`    | Jun 15, 2026 |
 | Claude Haiku 3    | `claude-3-haiku-20240307`     | Apr 20, 2026 |
@@ -101,7 +99,7 @@ When a user asks for a model by name, use this table to find the correct model I
 | "opus 4.7"                                | `claude-opus-4-7` (legacy — still active) |
 | "opus 4.6"                                | `claude-opus-4-6` (legacy — still active) |
 | "opus 4.5"                                | `claude-opus-4-5` (legacy — still active) |
-| "opus 4.1"                                | `claude-opus-4-1` (deprecated — suggest `claude-opus-5`) |
+| "opus 4.1"                                | Retired — suggest `claude-opus-4-8` (Anthropic's recommended replacement) |
 | "opus 4", "opus 4.0"                      | Retired — suggest `claude-opus-5` |
 | "sonnet", "balanced"                      | `claude-sonnet-5`              |
 | "sonnet 5"                                | `claude-sonnet-5`              |
