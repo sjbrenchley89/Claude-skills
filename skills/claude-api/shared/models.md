@@ -1,6 +1,6 @@
 # Claude Model Catalog
 
-> **Cached: 2026-08-31**
+> **Cached: 2026-09-01**
 
 **Only use exact model IDs listed in this file.** Never guess or construct model IDs — incorrect IDs will cause API errors. Use aliases wherever available. For the latest information, WebFetch the Models Overview URL in `shared/live-sources.md`, or query the Models API directly (see Programmatic Model Discovery below).
 
@@ -41,17 +41,19 @@ curl https://api.anthropic.com/v1/models/claude-opus-5 \
 
 ## Current Models (recommended)
 
-| Friendly Name     | Alias (use this)    | Full ID                       | Context        | Max Output | Status |
-|-------------------|---------------------|-------------------------------|----------------|------------|--------|
-| Claude Fable 5    | `claude-fable-5`    | —                             | 1M             | 128K       | Active |
-| Claude Mythos 5   | `claude-mythos-5`   | —                             | 1M             | 128K       | Invitation-only (Project Glasswing) |
-| Claude Opus 5     | `claude-opus-5`     | —                             | 1M             | 128K       | Active |
-| Claude Sonnet 5   | `claude-sonnet-5`   | —                             | 1M             | 128K       | Active |
-| Claude Haiku 4.5  | `claude-haiku-4-5`  | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active |
+| Friendly Name       | Alias (use this)     | Full ID                       | Context        | Max Output | Status |
+|---------------------|-----------------------|-------------------------------|----------------|------------|--------|
+| Claude Fable 5.1    | `claude-fable-5-1`    | —                             | 1M             | 128K       | Active |
+| Claude Mythos 5.1   | `claude-mythos-5-1`   | —                             | 1M             | 128K       | Invitation-only (Project Glasswing) |
+| Claude Fable 5      | `claude-fable-5`      | —                             | 1M             | 128K       | Active (superseded by Fable 5.1, still served) |
+| Claude Opus 5       | `claude-opus-5`       | —                             | 1M             | 128K       | Active |
+| Claude Sonnet 5     | `claude-sonnet-5`     | —                             | 1M             | 128K       | Active |
+| Claude Haiku 4.5    | `claude-haiku-4-5`    | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active |
 
 ### Model Descriptions
-- **Claude Fable 5** — Anthropic's most capable widely released model, for the most demanding reasoning and long-horizon agentic work. Adaptive thinking always on; GA on the Claude API, Bedrock, Google Cloud, and Microsoft Foundry since 2026-06-09. (Was temporarily suspended 2026-06-12; access restored.) **Requires 30-day data retention** — zero-data-retention (ZDR) orgs get a 400 `invalid_request_error`; use `claude-opus-5` (ZDR-eligible) or contact your Anthropic account team to adjust retention config.
-- **Claude Mythos 5** — Invitation-only research model available through [Project Glasswing](https://anthropic.com/glasswing). Not self-serve. Contact Anthropic, AWS, or Google Cloud account team for access. **Requires 30-day data retention** — zero-data-retention (ZDR) orgs get a 400 `invalid_request_error`, even with Glasswing access; contact your Anthropic account team to adjust retention config. `claude-mythos-preview` (the earlier Glasswing preview) is **deprecated** (not yet retired) — migrate any remaining usage to `claude-mythos-5`.
+- **Claude Fable 5.1** — Anthropic's most capable widely released model, for the most demanding reasoning and long-horizon agentic work; successor to Claude Fable 5 in the same tier at the same per-token price (`claude-fable-5` is still served). Adaptive thinking always on — omit `thinking` or send `{type: "adaptive"}`; `{type: "disabled"}` and `{type: "enabled", budget_tokens: N}` both 400. Breaking changes vs. Fable 5: forced `tool_choice` (`any`/`tool`) returns a 400 (use `auto` + an explicit instruction, `strict: true`, or structured outputs); thinking blocks are bound to the producing model; and edited/replayed history invalidates thinking blocks ("preserved thinking" — keep harnesses append-only). New: per-message `effort` mid-conversation, turn-scoped `clear_at: "next_user_message"` system messages, `thinking.display: "updates"` progress notes, and content provenance. **Requires 30-day data retention** — ZDR orgs get a 400 `invalid_request_error`; use `claude-opus-5` (ZDR-eligible) or contact your Anthropic account team. Everything below also applies to **Claude Mythos 5.1**. See `shared/model-migration.md` -> Migrating to Claude Fable 5.1 for full details.
+- **Claude Mythos 5.1** — Invitation-only research model through [Project Glasswing](https://anthropic.com/glasswing); same capabilities, pricing, and API surface as Claude Fable 5.1, but runs safeguards that depend on the access program (the `refusal` stop reason applies here too). Successor to Claude Mythos 5, which ran no safety classifiers. Not self-serve — contact Anthropic, AWS, or Google Cloud account team for access. **Requires 30-day data retention** — ZDR orgs get a 400 even with Glasswing access.
+- **Claude Fable 5** — Anthropic's previous-generation most-capable model, still served (superseded by Fable 5.1 above). Adaptive thinking always on; GA on the Claude API, Bedrock, Google Cloud, and Microsoft Foundry since 2026-06-09. **Requires 30-day data retention** — ZDR orgs get a 400 `invalid_request_error`; use `claude-opus-5` (ZDR-eligible) or contact your Anthropic account team.
 - **Claude Opus 5** — Most capable Opus-tier model, recommended starting point for complex agentic coding and enterprise work. Adaptive thinking; `effort` defaults to `high` on the Claude API and Claude Code (set explicitly for other surfaces). 1M context window, 128K max output tokens. See `shared/model-migration.md` for migration notes when moving off Opus 4.8 or earlier.
 - **Claude Sonnet 5** — Our best combination of speed and intelligence; drop-in upgrade from Sonnet 4.6 at the same price. Adaptive thinking only — manual extended thinking (`budget_tokens`) and `temperature`/`top_p`/`top_k` are rejected with a 400. New tokenizer (~30% more tokens vs. Sonnet 4.6 for the same text). `effort` defaults to `high`. 1M context window, 128K max output tokens.
 - **Claude Haiku 4.5** — Fastest and most cost-effective model for simple tasks. 200K context window.
@@ -90,10 +92,12 @@ When a user asks for a model by name, use this table to find the correct model I
 
 | User says...                              | Use this model ID              |
 |-------------------------------------------|--------------------------------|
-| "most powerful", "most capable"           | `claude-fable-5` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-5` under ZDR) |
-| "fable", "fable 5"                        | `claude-fable-5` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-5` under ZDR) |
-| "mythos", "mythos 5"                      | `claude-mythos-5` (invite-only — confirm access first; also requires 30-day data retention, 400 under ZDR) |
-| "mythos preview"                          | Deprecated (not yet retired) — suggest `claude-mythos-5` (invite-only, see note above) |
+| "most powerful", "most capable"           | `claude-fable-5-1` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-5` under ZDR) |
+| "fable", "fable 5.1"                      | `claude-fable-5-1` (requires 30-day data retention — ZDR orgs get a 400; use `claude-opus-5` under ZDR) |
+| "fable 5"                                  | `claude-fable-5` (still served, superseded by Fable 5.1 — offer `claude-fable-5-1` unless the user needs the older behavior; also requires 30-day data retention, 400 under ZDR) |
+| "mythos", "mythos 5.1"                    | `claude-mythos-5-1` (invite-only — confirm access first; also requires 30-day data retention, 400 under ZDR) |
+| "mythos 5"                                 | `claude-mythos-5` (still served, superseded by Mythos 5.1 — invite-only, also requires 30-day data retention, 400 under ZDR) |
+| "mythos preview"                          | Deprecated (not yet retired) — suggest `claude-mythos-5-1` (invite-only, see note above) |
 | "opus", "opus 5"                          | `claude-opus-5`                |
 | "opus 4.8"                                | `claude-opus-4-8` (legacy — still active) |
 | "opus 4.7"                                | `claude-opus-4-7` (legacy — still active) |
