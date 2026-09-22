@@ -13,8 +13,9 @@ For the latest, authoritative version (with code samples in every supported lang
 | Per-SDK Syntax Reference | Translate the Python examples in this guide to TypeScript / Go / Ruby / Java / C# / PHP |
 | Destination Models / Retired Model Replacements | Picking a target model |
 | Breaking Changes by Source Model | Migrating to Opus 4.6 / Sonnet 4.6 |
-| Migrating to Opus 5 | Migrating to Opus 5 (current recommended Opus target — breaking changes, effort defaults, checklist) |
-| Migrating to Opus 4.7 | Migrating to Opus 4.7 (breaking changes, silent defaults, behavioral shifts) — still relevant if pinning to 4.7 instead of Opus 5 |
+| Migrating to Opus 5.5 | Migrating to Opus 5.5 (current recommended Opus target — breaking changes, effort defaults, checklist) |
+| Migrating to Opus 5 | Migrating to Opus 5 (breaking changes, effort defaults, checklist) — still relevant if pinning to Opus 5 instead of Opus 5.5 |
+| Migrating to Opus 4.7 | Migrating to Opus 4.7 (breaking changes, silent defaults, behavioral shifts) — still relevant if pinning to 4.7 instead of Opus 5.5 |
 | Opus 4.7 Migration Checklist | The required vs optional items for 4.7, tagged `[BLOCKS]` / `[TUNE]` |
 | Verify the Migration | After edits — runtime spot-check |
 
@@ -174,12 +175,12 @@ If you're applying several prompt-tuning edits at once, offer them as a short li
 
 | If you're on…                         | Migrate to         | Why                                               |
 | ------------------------------------- | ------------------ | ------------------------------------------------- |
-| Opus 4.8 / 4.7 / 4.6                  | `claude-opus-5`    | Current recommended Opus-tier model; thinking on by default; see Migrating to Opus 5 |
-| Opus 4.0 / 4.1 / 4.5 / Opus 3         | `claude-opus-5`    | Skip intermediate Opus releases — migrate straight to the current model, but apply Additional Changes When Coming from 3.x / 4.0 / 4.1 → 4.6 first (tool versions, `undo_edit` removal, `model_context_window_exceeded`, trailing newlines), then Migrating to Opus 5 |
+| Opus 5 / 4.8 / 4.7 / 4.6              | `claude-opus-5-5`  | Current recommended Opus-tier model; cheaper than Opus 5 ($4/$20 vs $5/$25 per MTok); thinking can't be disabled; see Migrating to Opus 5.5 |
+| Opus 4.0 / 4.1 / 4.5 / Opus 3         | `claude-opus-5-5`  | Skip intermediate Opus releases — migrate straight to the current model, but apply Additional Changes When Coming from 3.x / 4.0 / 4.1 → 4.6 first (tool versions, `undo_edit` removal, `model_context_window_exceeded`, trailing newlines), then Migrating to Opus 5.5 |
 | Sonnet 4.0 / 4.5 / 3.7 / 3.5          | `claude-sonnet-4-6`| Best speed / intelligence balance; adaptive thinking; 64K output |
 | Haiku 3 / 3.5                         | `claude-haiku-4-5` | Fastest and most cost-effective                   |
 
-Default to `claude-opus-5` for the caller's Opus tier unless they explicitly ask to pin an older Opus release. If you're moving from Opus 4.6 or older, apply the base 4.6 migration changes below first (extended thinking → adaptive, sampling-parameter removal, prefill removal), then layer the Opus 5-specific changes on top (see Migrating to Opus 5 below). If you're jumping directly from Opus 3 / 4.0 / 4.1 / 4.5, also apply **Additional Changes When Coming from 3.x / 4.0 / 4.1 → 4.6** below first — tool-version pair updates, `undo_edit` removal, `model_context_window_exceeded` handling, and trailing-newline handling are required regardless of which newer model you land on, and skipping them causes 400s or silent runtime mismatches even though you're going straight to Opus 5. If the caller explicitly wants to stay on Opus 4.7 instead of moving to Opus 5, use the dedicated Migrating to Opus 4.7 section instead.
+Default to `claude-opus-5-5` for the caller's Opus tier unless they explicitly ask to pin an older Opus release (Opus 5 or earlier). If you're moving from Opus 4.6 or older, apply the base 4.6 migration changes below first (extended thinking → adaptive, sampling-parameter removal, prefill removal), then layer the Opus 5.5-specific changes on top (see Migrating to Opus 5.5 below). If you're jumping directly from Opus 3 / 4.0 / 4.1 / 4.5, also apply **Additional Changes When Coming from 3.x / 4.0 / 4.1 → 4.6** below first — tool-version pair updates, `undo_edit` removal, `model_context_window_exceeded` handling, and trailing-newline handling are required regardless of which newer model you land on, and skipping them causes 400s or silent runtime mismatches even though you're going straight to Opus 5.5. If the caller explicitly wants to stay on Opus 5 or Opus 4.7 instead of moving to Opus 5.5, use the dedicated Migrating to Opus 5 or Migrating to Opus 4.7 section instead.
 
 ---
 
@@ -191,12 +192,12 @@ These models return 404 — update immediately:
 | ----------------------------- | ------------- | -------------------- |
 | `claude-3-7-sonnet-20250219`  | Feb 19, 2026  | `claude-sonnet-4-6`  |
 | `claude-3-5-haiku-20241022`   | Feb 19, 2026  | `claude-haiku-4-5`   |
-| `claude-3-opus-20240229`      | Jan 5, 2026   | `claude-opus-5`      |
+| `claude-3-opus-20240229`      | Jan 5, 2026   | `claude-opus-5-5`    |
 | `claude-3-5-sonnet-20241022`  | Oct 28, 2025  | `claude-sonnet-4-6`  |
 | `claude-3-5-sonnet-20240620`  | Oct 28, 2025  | `claude-sonnet-4-6`  |
 | `claude-3-sonnet-20240229`    | Jul 21, 2025  | `claude-sonnet-4-6`  |
 | `claude-2.1`, `claude-2.0`    | Jul 21, 2025  | `claude-sonnet-4-6`  |
-| `claude-opus-4-20250514`      | Jun 15, 2026  | `claude-opus-5`      |
+| `claude-opus-4-20250514`      | Jun 15, 2026  | `claude-opus-5-5`    |
 | `claude-sonnet-4-20250514`    | Jun 15, 2026  | `claude-sonnet-4-6`  |
 
 ## Deprecated Models (retiring soon)
@@ -471,16 +472,17 @@ If the model is now overtriggering a tool or skill, the fix is almost always to 
 
 | Old string (migration source)  | New string         |
 | ------------------------------ | ------------------ |
-| `claude-opus-4-8`              | `claude-opus-5`    |
-| `claude-opus-4-7`              | `claude-opus-5`    |
-| `claude-opus-4-6`              | `claude-opus-5`    |
-| `claude-opus-4-5`              | `claude-opus-5`    |
-| `claude-opus-4-1`              | `claude-opus-5`    |
-| `claude-opus-4-0`              | `claude-opus-5`    |
+| `claude-opus-5`                | `claude-opus-5-5`  |
+| `claude-opus-4-8`              | `claude-opus-5-5`  |
+| `claude-opus-4-7`              | `claude-opus-5-5`  |
+| `claude-opus-4-6`              | `claude-opus-5-5`  |
+| `claude-opus-4-5`              | `claude-opus-5-5`  |
+| `claude-opus-4-1`              | `claude-opus-5-5`  |
+| `claude-opus-4-0`              | `claude-opus-5-5`  |
 | `claude-sonnet-4-5`            | `claude-sonnet-4-6`|
 | `claude-sonnet-4-0`            | `claude-sonnet-4-6`|
 
-Older aliases (`claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-5`, `claude-sonnet-4-5`, `claude-opus-4-1`, etc.) are still active and can be pinned if you need time before upgrading — see `shared/models.md` for the full legacy list.
+Older aliases (`claude-opus-5`, `claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-5`, `claude-sonnet-4-5`, `claude-opus-4-1`, etc.) are still active and can be pinned if you need time before upgrading — see `shared/models.md` for the full legacy list.
 
 ---
 
@@ -518,11 +520,73 @@ For cached prompts: the render order and hash inputs did not change, so existing
 
 ---
 
+## Migrating to Opus 5.5
+
+> **Model ID `claude-opus-5-5` is authoritative as written here.** When the user asks to migrate to Opus 5.5 (or asks for "the current/latest Opus"), write `model="claude-opus-5-5"` exactly. Do **not** WebFetch to verify — this guide is the source of truth for migration target IDs. The corresponding entry exists in `shared/models.md`.
+
+Claude Opus 5.5 supersedes Claude Opus 5 as the recommended Opus-tier model for long-running agentic coding and knowledge work, and costs less ($4 / input MTok, $20 / output MTok, vs. Opus 5's $5 / $25). It keeps Opus 5's 1M token context window and 128K max output tokens.
+
+**TL;DR for someone on Opus 5:** update the model ID to `claude-opus-5-5`; remove `thinking: {type: "disabled"}` and manual `{type: "enabled", budget_tokens: N}` — both 400 on Opus 5.5, thinking can no longer be disabled at any effort level; replace forced `tool_choice` (`any`/`tool`) with `auto` plus strict tool use or structured outputs; if you use computer use on the Claude API or Google Cloud, switch from `computer_20251124` to the `computer_toolset_20260801` toolset and update your agent loop (Amazon Bedrock keeps `computer_20251124` unchanged); re-run an `effort` sweep — the default is now `medium`, not `high`; if you stream narration between tool calls, set `thinking.display: "updates"` (beta) or `"summarized"` since that text now arrives as progress-update `thinking` blocks instead of `text` blocks.
+
+### Breaking changes (will 400 on Opus 5.5)
+
+**Thinking can't be disabled.** `thinking: {"type": "disabled"}` and `thinking: {"type": "enabled", "budget_tokens": N}` both return a 400 (`"thinking.type.disabled" is not supported for this model.` / `"thinking.type.enabled" is not supported for this model.`). Remove the `thinking` field entirely and pick an `effort` level — use a lower one where you previously disabled thinking to save tokens.
+
+```python
+# Opus 5 — thinking could be disabled at high effort or below
+client.messages.create(
+    model="claude-opus-5",
+    max_tokens=16000,
+    thinking={"type": "disabled"},
+    output_config={"effort": "high"},
+    messages=[...],
+)
+
+# Opus 5.5 — thinking is always on; effort is the only control
+client.messages.create(
+    model="claude-opus-5-5",
+    max_tokens=16000,
+    output_config={"effort": "low"},
+    messages=[...],
+)
+```
+
+**Forced tool use is not supported.** `tool_choice` types `any` and `tool` return a 400 (`tool_choice: type "tool" and "any" are not supported for this model.`), including on the token-counting endpoint. Use `auto` with strict tool use (`{**tool, "strict": True}`) or structured outputs, and state in the prompt when the tool applies.
+
+**The `computer_20251124` computer use tool is not supported on the Claude API and Google Cloud.** A `tools` entry of type `computer_20251124` returns a 400. Declare `computer_toolset_20260801` instead (drop the beta header, no `name` or display dimensions on the entry), and update the agent loop to handle multiple `tool_use` blocks per turn (action is the block's `name`) and echo `toolset_name` on every result. On Amazon Bedrock, `computer_20251124` keeps working unchanged.
+
+**Thinking blocks are tied to the model and the conversation.** Only Claude Fable 5.1 and Claude Mythos 5.1 read Claude Opus 5.5's thinking blocks on the Claude API — no other model does, and routing a conversation to a different model runs those turns without them. Opus 5.5 itself reads thinking blocks from Opus 5 and earlier Opus/Sonnet/Haiku models, but not from Fable or Mythos models. Keep conversations append-only (no edits to `system`, `tools`, or earlier messages) — for accounts created on or after 2026-08-31, replaying a thinking block after such an edit 400s by default.
+
+### Effort levels on Opus 5.5
+
+Default is `medium` (Opus 5's default was `high`) — effort is the only thinking control since thinking can't be disabled. Run a fresh sweep rather than reusing Opus 5 settings; step down where quality holds and up for the most demanding work.
+
+### Other behavioral differences
+
+**Text between tool calls now returns as `thinking` blocks.** On Opus 5 this narration came back as `text` blocks; on Opus 5.5 it comes back as progress-update `thinking` blocks (at most one before each tool call), empty by default (`thinking.display: "omitted"`). No request fails, but an app that streamed that text as progress updates goes quiet between tool calls. Set `display: "updates"` (beta, `thinking-display-updates-2026-08-18` header) or `"summarized"` and render the non-empty `thinking` blocks ahead of the `tool_use` block they precede.
+
+**Broader safety classifiers.** Opus 5.5 can return `stop_reason: "refusal"` with `stop_details.category` values beyond what Opus 5 covers (e.g. `"bio"`, `"reasoning_extraction"`). Configure server-side fallback or your own retry; note that server-side fallback does not retry `"reasoning_extraction"` refusals.
+
+### Opus 5.5 Migration Checklist
+
+- [ ] Update model ID: `claude-opus-5` (or older) → `claude-opus-5-5`
+- [ ] Remove `thinking: {type: "disabled"}` and `thinking: {type: "enabled", budget_tokens: N}` — choose an `effort` level instead
+- [ ] Set `effort` explicitly — default is now `medium`, not `high`
+- [ ] Replace forced `tool_choice` (`any`/`tool`) with `auto` + strict tool use or structured outputs
+- [ ] On the Claude API or Google Cloud, replace `computer_20251124` with the `computer_toolset_20260801` toolset and update the agent loop; no change needed on Amazon Bedrock
+- [ ] If a router/fallback can move the conversation off Opus 5.5, expect thinking blocks to be dropped except on Fable 5.1 / Mythos 5.1; keep conversations append-only
+- [ ] If narration between tool calls is user-facing, set `thinking.display: "updates"` or `"summarized"` and render non-empty `thinking` blocks
+- [ ] Handle `stop_reason: "refusal"` including new categories (`"bio"`, `"reasoning_extraction"`, etc.) and configure fallback
+- [ ] Re-baseline cost and latency at your chosen effort level
+- [ ] If migrating from Opus 4.8 or earlier: apply the Migrating to Opus 5 changes below first (thinking-on-by-default, sampling params, prefills), then this section
+
+---
+
 ## Migrating to Opus 5
 
-> **Model ID `claude-opus-5` is authoritative as written here.** When the user asks to migrate to Opus 5 (or asks for "the current/latest Opus"), write `model="claude-opus-5"` exactly. Do **not** WebFetch to verify — this guide is the source of truth for migration target IDs. The corresponding entry exists in `shared/models.md`.
+> **Model ID `claude-opus-5` is authoritative as written here.** When the user explicitly wants to pin Opus 5 rather than move to the current recommended target, write `model="claude-opus-5"` exactly. Do **not** WebFetch to verify — this guide is the source of truth for migration target IDs. The corresponding entry exists in `shared/models.md`.
 
-Claude Opus 5 is a step-change improvement over Claude Opus 4.8 on deep reasoning, agentic and long-horizon tasks, and test-time compute scaling. It's priced the same as Opus 4.8 ($5 / input MTok, $25 / output MTok). Opus 4.1 is deprecated (retiring 2026-08-05) — migrate directly to Opus 5, not to Opus 4.8.
+Claude Opus 5 was a step-change improvement over Claude Opus 4.8 on deep reasoning, agentic and long-horizon tasks, and test-time compute scaling; it has since been superseded by Claude Opus 5.5 (see Migrating to Opus 5.5 above), and this section is kept for callers who explicitly want to pin Opus 5 rather than move to the current model. It's priced the same as Opus 4.8 ($5 / input MTok, $25 / output MTok). Opus 4.1 is deprecated (retiring 2026-08-05) — migrate directly to Opus 5.5 (or Opus 5 if pinning), not to Opus 4.8.
 
 **TL;DR for someone on Opus 4.8 (or earlier):** update the model ID to `claude-opus-5`; thinking now runs by default even with no `thinking` field, so revisit `max_tokens` (a hard cap on thinking + response together); remove `temperature`/`top_p`/`top_k`, manual `thinking: {type: "enabled", budget_tokens: N}`, and assistant prefills — all 400 on Opus 5; re-run an `effort` sweep rather than reusing Opus 4.8 settings; re-baseline token counts with `count_tokens()` since Opus 5 shares Opus 4.7's tokenizer (~1x–1.35x more tokens than pre-4.7 models for the same text).
 
@@ -591,7 +655,7 @@ Default is `high` **on the Claude API and Claude Code only** — set `effort` ex
 - [ ] If using `xhigh`/`max` effort, set `max_tokens` to 64K+
 - [ ] Re-baseline token counts and cost with `count_tokens()`
 - [ ] Handle `stop_reason: "refusal"` for safety-classifier refusals
-- [ ] If migrating from Opus 4.1: go straight to Opus 5, not Opus 4.8 — Opus 4.1 is deprecated and Opus 5 is the recommended target
+- [ ] If migrating from Opus 4.1: go straight to Opus 5.5 (or Opus 5 if pinning), not Opus 4.8 — Opus 4.1 is deprecated and Opus 5.5 is the recommended target
 - [ ] If migrating from Opus 3 / 4.0 / 4.1 / 4.5 (not 4.6+): also apply **Additional Changes When Coming from 3.x / 4.0 / 4.1 → 4.6** above — tool-version pair, `undo_edit` removal, `model_context_window_exceeded` handling, trailing newlines — these still apply even when the destination is Opus 5, not 4.6
 
 ---
@@ -600,7 +664,7 @@ Default is `high` **on the Claude API and Claude Code only** — set `effort` ex
 
 > **Model ID `claude-opus-4-7` is authoritative as written here.** When the user asks to migrate to Opus 4.7, write `model="claude-opus-4-7"` exactly. Do **not** WebFetch to verify — this guide is the source of truth for migration target IDs. The corresponding entry exists in `shared/models.md`.
 
-Claude Opus 4.7 was the most capable generally available model at its launch; it has since been superseded by Claude Opus 5 (see Migrating to Opus 5 above), and this section is kept for callers who explicitly want to pin Opus 4.7 rather than move to the current model. Opus 4.7 is highly autonomous and performs exceptionally well on long-horizon agentic work, knowledge work, vision tasks, and memory tasks. This section summarizes everything new at its launch. It is layered on top of the 4.6 migration above — if the caller is jumping from Opus 4.5 or older, apply the 4.6 changes first, then apply this section.
+Claude Opus 4.7 was the most capable generally available model at its launch; it has since been superseded by Claude Opus 5.5 (see Migrating to Opus 5.5 above), and this section is kept for callers who explicitly want to pin Opus 4.7 rather than move to the current model. Opus 4.7 is highly autonomous and performs exceptionally well on long-horizon agentic work, knowledge work, vision tasks, and memory tasks. This section summarizes everything new at its launch. It is layered on top of the 4.6 migration above — if the caller is jumping from Opus 4.5 or older, apply the 4.6 changes first, then apply this section.
 
 **TL;DR for someone already on Opus 4.6:** update the model ID to `claude-opus-4-7`, strip any remaining `budget_tokens` and sampling parameters (both 400 on Opus 4.7), give `max_tokens` extra headroom and re-baseline with `count_tokens()` against the new model, opt back into `thinking.display: "summarized"` if reasoning is surfaced to users, and re-tune `effort` — it matters more on 4.7 than on any prior Opus.
 
