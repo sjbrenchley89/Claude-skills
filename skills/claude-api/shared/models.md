@@ -1,6 +1,6 @@
 # Claude Model Catalog
 
-> **Cached: 2026-09-27**
+> **Cached: 2026-10-10**
 
 **Only use exact model IDs listed in this file.** Never guess or construct model IDs — incorrect IDs will cause API errors. Use aliases wherever available. For the latest information, WebFetch the Models Overview URL in `shared/live-sources.md`, or query the Models API directly (see Programmatic Model Discovery below).
 
@@ -48,8 +48,10 @@ curl https://api.anthropic.com/v1/models/claude-opus-5 \
 | Claude Fable 5      | `claude-fable-5`      | —                             | 1M             | 128K       | Active (superseded by Fable 5.1, still served) |
 | Claude Opus 5.5     | `claude-opus-5-5`     | —                             | 1M             | 128K       | Active |
 | Claude Opus 5       | `claude-opus-5`       | —                             | 1M             | 128K       | Active (superseded by Opus 5.5, still served) |
-| Claude Sonnet 5     | `claude-sonnet-5`     | —                             | 1M             | 128K       | Active |
-| Claude Haiku 4.5    | `claude-haiku-4-5`    | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active |
+| Claude Sonnet 5.5   | `claude-sonnet-5-5`   | —                             | 1M             | 128K       | Active |
+| Claude Sonnet 5     | `claude-sonnet-5`     | —                             | 1M             | 128K       | Active (superseded by Sonnet 5.5, still served) |
+| Claude Haiku 5.5    | `claude-haiku-5-5`    | —                             | 1M             | 128K       | Active |
+| Claude Haiku 4.5    | `claude-haiku-4-5`    | `claude-haiku-4-5-20251001`   | 200K           | 64K        | Active (superseded by Haiku 5.5, still served) |
 
 ### Model Descriptions
 - **Claude Fable 5.1** — Anthropic's most capable widely released model, for the most demanding reasoning and long-horizon agentic work; successor to Claude Fable 5 in the same tier at the same per-token price (`claude-fable-5` is still served). Adaptive thinking always on — omit `thinking` or send `{type: "adaptive"}`; `{type: "disabled"}` and `{type: "enabled", budget_tokens: N}` both 400. Breaking changes vs. Fable 5: forced `tool_choice` (`any`/`tool`) returns a 400 (use `auto` + an explicit instruction, `strict: true`, or structured outputs); thinking blocks are bound to the producing model; and edited/replayed history invalidates thinking blocks ("preserved thinking" — keep harnesses append-only). New: per-message `effort` mid-conversation, turn-scoped `clear_at: "next_user_message"` system messages, `thinking.display: "updates"` progress notes, and content provenance. **Requires 30-day data retention** — ZDR orgs get a 400 `invalid_request_error`; use `claude-opus-5` (ZDR-eligible) or contact your Anthropic account team. Everything below also applies to **Claude Mythos 5.1**. See `shared/model-migration.md` -> Migrating to Claude Fable 5.1 for full details.
@@ -57,7 +59,9 @@ curl https://api.anthropic.com/v1/models/claude-opus-5 \
 - **Claude Fable 5** — Anthropic's previous-generation most-capable model, still served (superseded by Fable 5.1 above). Adaptive thinking always on; GA on the Claude API, Bedrock, Google Cloud, and Microsoft Foundry since 2026-06-09. **Requires 30-day data retention** — ZDR orgs get a 400 `invalid_request_error`; use `claude-opus-5` (ZDR-eligible) or contact your Anthropic account team.
 - **Claude Opus 5.5** — Recommended starting point for long-running agentic coding and knowledge work, superseding Claude Opus 5 at a lower price ($4/$20 per MTok vs. $5/$25). Adaptive thinking always on — `thinking: {type: "disabled"}` and manual `{type: "enabled", budget_tokens: N}` both 400; `effort` is the only thinking control and defaults to `medium` (Opus 5 defaulted to `high` — re-run your effort sweep). Forced `tool_choice` (`any`/`tool`) returns a 400 — use `auto` + strict tool use or structured outputs. On the Claude API and Google Cloud, `computer_20251124` is not supported — declare the `computer_toolset_20260801` toolset instead (Bedrock keeps `computer_20251124`). Thinking blocks are bound to the producing model and the append-only conversation; only Fable 5.1/Mythos 5.1 also read Opus 5.5 thinking blocks. Text between tool calls now arrives as progress-update `thinking` blocks (set `thinking.display: "updates"` or `"summarized"` to surface them). 1M context window, 128K max output tokens. See `shared/model-migration.md` for full migration notes.
 - **Claude Opus 5** — Anthropic's previous-generation Opus-tier model, still served (superseded by Opus 5.5 above). Adaptive thinking; `effort` defaults to `high` on the Claude API and Claude Code (set explicitly for other surfaces). 1M context window, 128K max output tokens. See `shared/model-migration.md` for migration notes when moving off Opus 4.8 or earlier.
-- **Claude Sonnet 5** — Our best combination of speed and intelligence; drop-in upgrade from Sonnet 4.6 at the same price. Adaptive thinking only — manual extended thinking (`budget_tokens`) and `temperature`/`top_p`/`top_k` are rejected with a 400. New tokenizer (~30% more tokens vs. Sonnet 4.6 for the same text). `effort` defaults to `high`. 1M context window, 128K max output tokens.
+- **Claude Sonnet 5.5** — Best combination of speed and intelligence; $2 / $10 per MTok. Adaptive thinking; `effort` defaults to `high`. 1M context window, 128K max output tokens. Retirement not sooner than September 28, 2027.
+- **Claude Haiku 5.5** — Fastest model, for high-volume, latency-sensitive tasks such as classification, extraction, and routing; from $0.10 / $0.50 per MTok. Adaptive thinking; `effort` defaults to `medium`. 1M context window, 128K max output tokens. Retirement not sooner than October 7, 2027.
+- **Claude Sonnet 5** — Previous-generation Sonnet, still served (superseded by Sonnet 5.5 above). Our best combination of speed and intelligence; drop-in upgrade from Sonnet 4.6 at the same price. Adaptive thinking only — manual extended thinking (`budget_tokens`) and `temperature`/`top_p`/`top_k` are rejected with a 400. New tokenizer (~30% more tokens vs. Sonnet 4.6 for the same text). `effort` defaults to `high`. 1M context window, 128K max output tokens.
 - **Claude Haiku 4.5** — Fastest and most cost-effective model for simple tasks. 200K context window.
 
 ## Legacy Models (still active)
